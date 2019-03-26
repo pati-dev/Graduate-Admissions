@@ -1,0 +1,37 @@
+---
+title: 'S670: Final project proposal'
+author: "Ankit Mathur & Nitesh Jaswal"
+date: "3/26/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, echo = FALSE, warning = FALSE)
+library(tidyverse)
+cb_palette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+```{r}
+country = read.csv("Country-List-Metadata.csv")
+dom = read.csv("Domestic-graduate-student-survey-results.csv")
+intl = read.csv("International-graduate-student-survey-results.csv")
+```
+
+```{r}
+# summary(factor(intl$Q40))
+# nrow(intl)
+```
+
+Group Name: Final project group 14  
+
+Group members: Ankit Mathur & Nitesh Jaswal  
+
+Dataset: International-graduate-student-survey-results.csv  
+
+Description: This dataset is a part of the *International STEM Graduate Student Survey (2015)* that was funded by the **National Science Foundation (SES 0938099)** and is available at the Open ICSPR website (*link*: http://doi.org/10.3886/E100084V1). It contains variables to assess the reasons why international students are coming to the United States for their graduate studies, the challenges they have faced while studying in the US, their future career plans, and whether they wish to stay or leave the US upon graduation. The Universe of this survey dataset pertains to all graduate students (Master's and PhD) in STEM disciplines from the following universities: Columbia University, University of Illinois-Urbana Champaign, Michigan State University, Northeastern University, Purdue University, University of Southern California, Arizona State University, University of California at Los Angeles, New York University, University of Washington at Seattle.  
+
+Research question: How does the academic experience of a graduate student affect his/her choice of staying back in the United States after the completion of his/her graduate studies?  
+
+Additional information: The entire survey has been also been uploaded for your reference (*Survey.pdf*). We intend to use Q39 to Q43 as our predictor variables and Q28 as the response variable.
