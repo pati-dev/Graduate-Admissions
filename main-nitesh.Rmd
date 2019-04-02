@@ -1,0 +1,46 @@
+---
+title: "main-nitesh"
+author: "Nitesh Singh Jaswal"
+date: "March 26, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+inter.data = read.csv("International-graduate-student-survey-results.csv")
+summary(inter.data)
+# Q39
+acad.experience = rowSums(select(inter.data, Q39_1 , Q39_2 , Q39_3 , Q39_4 , Q39_5 , Q39_6 , Q39_7), na.rm = FALSE, dims = 1)/7
+acad.experience = round(acad.experience)
+# Q43
+acad.challenges =  as.numeric(inter.data$Q43_1 | inter.data$Q43_2 |inter.data$Q43_3 |inter.data$Q43_4 |inter.data$Q43_5 |inter.data$Q43_7)
+inter.small = select(inter.data, Q2, Q3, Q4, Q5, Q22, Q40, Q41, Q42, Q28)
+inter.small$Q39 = acad.experience
+inter.small$Q43 = acad.challenges
+```
+
+Variables to consider (Know of the land):
+Age: Q2
+Gender: Q3
+Degree pursuing: Q4
+Discipline of degree: Q5
+What is your home country: Q22
+
+Response variable:
+Want to remain in US after graduation: Q28 
+
+Predictor Variables:
+Academic experience in comparison with your home country: Q39
+Treatment by Prof/Colleagues in comparison with your home country: Q40
+Treatment by Prof/Colleagues if you went back to your home country: Q41
+Adjustment to American educational culture: Q42
+Challenges encountered in the US: Q43
+
+
+
+
+
