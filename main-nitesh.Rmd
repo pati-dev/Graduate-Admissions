@@ -7,12 +7,20 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 ```{r}
-dom.data = read.csv("Domestic-graduate-student-survey-results.csv")
 inter.data = read.csv("International-graduate-student-survey-results.csv")
 summary(inter.data)
+# Q39
+acad.experience = rowSums(select(inter.data, Q39_1 , Q39_2 , Q39_3 , Q39_4 , Q39_5 , Q39_6 , Q39_7), na.rm = FALSE, dims = 1)/7
+acad.experience = round(acad.experience)
+# Q43
+acad.challenges =  as.numeric(inter.data$Q43_1 | inter.data$Q43_2 |inter.data$Q43_3 |inter.data$Q43_4 |inter.data$Q43_5 |inter.data$Q43_7)
+inter.small = select(inter.data, Q2, Q3, Q4, Q5, Q22, Q40, Q41, Q42, Q28)
+inter.small$Q39 = acad.experience
+inter.small$Q43 = acad.challenges
 ```
 
 Variables to consider (Know of the land):
