@@ -20,7 +20,7 @@ acad.experience <- rowSums(select(inter.data, Q39_1 , Q39_2 , Q39_3 , Q39_4 , Q3
 # acad.experience = round(acad.experience)
 # Q43
 acad.challenges =  as.numeric(inter.data$Q43_1 | inter.data$Q43_2 |inter.data$Q43_3 |inter.data$Q43_4 |inter.data$Q43_5 |inter.data$Q43_7)
-inter.small = select(inter.data, Q2, Q3, Q4, Q5, Q22, Q40, Q41, Q42, Q28)
+inter.small = select(inter.data, Q2, Q3, Q4, Q5, Q22, Q36, Q40, Q41, Q42, Q28)
 inter.small$Q39 = acad.experience
 inter.small$Q43 = acad.challenges
 ```
@@ -53,6 +53,36 @@ country_order <- c("China", "India", "Taiwan", "Turkey", "Republic of Korea", "O
 ggplot(inter.small, aes(x=country)) + stat_count(fill="#F0E442") + theme_bw() +
   ggtitle("Distribution of respondents by country") +
   scale_x_discrete(limits = country_order)
+```
+
+```{r}
+inter.small$likelihood = recode(inter.small$Q28, `1` = 2, `3` = 1, `2` = 0)
+inter.small$likelihood = as.factor(inter.small$likelihood)
+levels(inter.small$likelihood) <- c("Unlikely", "Somewhat likely", "Very likely")
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q39, ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q41, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q43, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q36, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
 
