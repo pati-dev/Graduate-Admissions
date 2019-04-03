@@ -1,0 +1,64 @@
+---
+title: "STEM grad students"
+author: "Ankit Mathur"
+date: "4/2/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE)
+library(tidyverse)
+cb_palette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+```{r}
+country = read.csv("Country-List-Metadata.csv")
+# dom = read.csv("Domestic-graduate-student-survey-results.csv")
+inter.data = read.csv("International-graduate-student-survey-results.csv")
+# Q39
+acad.experience <- rowSums(select(inter.data, Q39_1 , Q39_2 , Q39_3 , Q39_4 , Q39_5 , Q39_6 , Q39_7), na.rm = FALSE, dims = 1)/7
+# acad.experience = round(acad.experience)
+# Q43
+acad.challenges =  as.numeric(inter.data$Q43_1 | inter.data$Q43_2 |inter.data$Q43_3 |inter.data$Q43_4 |inter.data$Q43_5 |inter.data$Q43_7)
+inter.small = select(inter.data, Q2, Q3, Q4, Q5, Q22, Q40, Q41, Q42, Q28)
+inter.small$Q39 = acad.experience
+inter.small$Q43 = acad.challenges
+```
+
+```{r}
+inter.small$gender <- as.factor(ifelse(inter.small$Q3==1, "Male", ifelse(inter.small$Q3==2, "Female", NA)))
+gender_order <- c("Male", "Female")
+ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender)) + stat_count(fill="#E69F00") + theme_bw() +
+  ggtitle("Distribution of respondents by gender") +
+  scale_x_discrete(limits = gender_order)
+```
+
+```{r}
+inter.small$degree <- as.factor(ifelse(inter.small$Q4==1, "Master's", "PhD"))
+ggplot(inter.small, aes(x=degree)) + stat_count(fill="#56B4E9") + theme_bw() +
+  ggtitle("Distribution of respondents by degree")
+```
+
+```{r}
+inter.small$discipline <- as.factor(ifelse(inter.small$Q5==1, "Life sciences", ifelse(inter.small$Q5==2, "Physical sciences", ifelse(inter.small$Q5==3, "Engineering", ifelse(inter.small$Q5==4, "Mathematics", ifelse(inter.small$Q5==5, "Computer science", "Other"))))))
+disc_order <- c("Engineering", "Life sciences", "Computer science", "Physical sciences", "Mathematics", "Other")
+ggplot(inter.small, aes(x=discipline)) + stat_count(fill="#009E73") + theme_bw() +
+  ggtitle("Distribution of respondents by discipline") +
+  scale_x_discrete(limits = disc_order)
+```
+
+```{r}
+inter.small$country <- as.factor(ifelse(inter.small$Q22==44, "China", ifelse(inter.small$Q22==91, "India", ifelse(inter.small$Q22==161, "Republic of Korea", ifelse(inter.small$Q22==190, "Taiwan", ifelse(inter.small$Q22==198, "Turkey", "Other"))))))
+country_order <- c("China", "India", "Taiwan", "Turkey", "Republic of Korea", "Other")
+ggplot(inter.small, aes(x=country)) + stat_count(fill="#F0E442") + theme_bw() +
+  ggtitle("Distribution of respondents by country") +
+  scale_x_discrete(limits = country_order)
+```
+
+
+```{r}
+summary(factor(inter.data$Q22))
+```
+
+
+
