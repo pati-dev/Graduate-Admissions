@@ -48,8 +48,8 @@ ggplot(inter.small, aes(x=discipline)) + stat_count(fill="#009E73") + theme_bw()
 ```
 
 ```{r}
-inter.small$country <- as.factor(ifelse(inter.small$Q22==44, "China", ifelse(inter.small$Q22==91, "India", ifelse(inter.small$Q22==161, "Republic of Korea", ifelse(inter.small$Q22==190, "Taiwan", ifelse(inter.small$Q22==198, "Turkey", "Other"))))))
-country_order <- c("China", "India", "Taiwan", "Turkey", "Republic of Korea", "Other")
+inter.small$country <- as.factor(ifelse(inter.small$Q22==44, "China", ifelse(inter.small$Q22==91, "India", "Other")))
+country_order <- c("China", "India", "Other")
 ggplot(inter.small, aes(x=country)) + stat_count(fill="#F0E442") + theme_bw() +
   ggtitle("Distribution of respondents by country") +
   scale_x_discrete(limits = country_order)
@@ -62,7 +62,117 @@ levels(inter.small$likelihood) <- c("Unlikely", "Somewhat likely", "Very likely"
 ```
 
 ```{r}
-ggplot(inter.small, aes(x = Q39, ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q40, color=gender, fill=gender)) +
+  geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~gender) +
+  guides(fill = guide_legend(title="Sex"), color = FALSE) +
+  ggtitle("Treatment by colleagues and professors in the US as compared to home country") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q40, color=degree, fill=degree)) +
+  geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~degree) +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Treatment by colleagues and professors in the US as compared to home country") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q40, color=discipline, fill=discipline)) +
+  geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~discipline) +
+  guides(fill = guide_legend(title="Discipline"), color = FALSE) +
+  ggtitle("Treatment by colleagues and professors in the US as compared to home country") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q40, color=country, fill=country)) +
+  geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~country) +
+  guides(fill = guide_legend(title="Country"), color = FALSE) +
+  ggtitle("Treatment by colleagues and professors in the US as compared to home country") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q41, color=gender, fill=gender)) +
+  geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~gender) +
+  guides(fill = guide_legend(title="Sex"), color = FALSE) +
+  ggtitle("Expectation of treatment by colleagues and professors in home country if returned") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q41, color=degree, fill=degree)) +
+  geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~degree) +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Expectation of treatment by colleagues and professors in home country if returned") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+As compared to PhD students, Master's students feel that they will be treated better by their colleagues and professors in their home country if they were to return after their graduation.
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q41, color=discipline, fill=discipline)) +
+  geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~discipline) +
+  guides(fill = guide_legend(title="Discipline"), color = FALSE) +
+  ggtitle("Expectation of treatment by colleagues and professors in home country if returned") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q41, color=country, fill=country)) +
+  geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~country + degree) +
+  guides(fill = guide_legend(title="Country"), color = FALSE) +
+  ggtitle("Expectation of treatment by colleagues and professors in home country if returned") +
+  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw()
+```
+
+
+
+
+```{r}
+aggregate(Q40 ~ degree + Q41, data=inter.small, length)
+```
+
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$gender),], aes(x = Q39, ..count.., fill = likelihood)) + 
+  geom_density(position = "fill") + 
+  ggtitle("Likelihood of staying in the US after graduation") + 
+  scale_fill_manual(values = cb_palette) +
+  facet_wrap(~gender)
 ```
 
 ```{r}
