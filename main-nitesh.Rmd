@@ -15,6 +15,7 @@ library(broom)
 
 ```{r}
 inter.data = read.csv("International-graduate-student-survey-results.csv")
+contcode = read.csv("Country-List-Metadata.csv")
 # summary(inter.data)
 # Q39
 acad.experience = rowSums(dplyr::select(inter.data, Q39_1 , Q39_2 , Q39_3 , Q39_4 , Q39_5 , Q39_6 , Q39_7), na.rm = FALSE, dims = 1)/7
@@ -31,6 +32,9 @@ inter.small$Q3 = factor(inter.small$Q3, labels = c("Male", "Female", "Not Specif
 # Factoring Studies
 inter.small$Q5 = factor(inter.small$Q5)
 levels(inter.small$Q5) <- c("Life sciences", "Physical sciences", "Engineering", "Mathematics", "Computer science", "Other")
+# Factoring countries
+inter.small$Q22 = factor(inter.small$Q22)
+levels(inter.small$Q5) <- as.vector(contcode)
 
 # Recoding and Factoring the response in order
 inter.small$likelihood = recode(inter.small$Q28, `1` = 2, `3` = 1, `2` = 0)
