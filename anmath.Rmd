@@ -11,7 +11,7 @@ library(tidyverse)
 cb_palette = c("#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#E69F00", "#999999")
 ```
 
-```{r}
+```{r, include=FALSE}
 country = read.csv("Country-List-Metadata.csv")
 # dom = read.csv("Domestic-graduate-student-survey-results.csv")
 inter.data = read.csv("International-graduate-student-survey-results.csv")
@@ -25,7 +25,7 @@ inter.small$Q39 = acad.experience
 inter.small$Q43 = ifelse(inter.data$Q43_6, 0, ifelse(acad.challenges<3, 1, 2))
 ```
 
-```{r}
+```{r, include=FALSE}
 inter.small$gender <- as.factor(ifelse(inter.small$Q3==1, "Male", ifelse(inter.small$Q3==2, "Female", NA)))
 gender_order <- c("Male", "Female")
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender)) + stat_count(fill="#E69F00") + theme_bw() +
@@ -33,13 +33,13 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender)) + stat_count(fil
   scale_x_discrete(limits = gender_order)
 ```
 
-```{r}
+```{r, include=FALSE}
 inter.small$degree <- as.factor(ifelse(inter.small$Q4==1, "Master's", "PhD"))
 ggplot(inter.small, aes(x=degree)) + stat_count(fill="#56B4E9") + theme_bw() +
   ggtitle("Distribution of respondents by degree")
 ```
 
-```{r}
+```{r, include=FALSE}
 inter.small$discipline <- as.factor(ifelse(inter.small$Q5==1, "Life sciences", ifelse(inter.small$Q5==2, "Physical sciences", ifelse(inter.small$Q5==3, "Engineering", ifelse(inter.small$Q5==4, "Mathematics", ifelse(inter.small$Q5==5, "Computer science", "Other"))))))
 disc_order <- c("Engineering", "Life sciences", "Computer science", "Physical sciences", "Mathematics", "Other")
 ggplot(inter.small, aes(x=discipline)) + stat_count(fill="#009E73") + theme_bw() +
@@ -47,7 +47,7 @@ ggplot(inter.small, aes(x=discipline)) + stat_count(fill="#009E73") + theme_bw()
   scale_x_discrete(limits = disc_order)
 ```
 
-```{r}
+```{r, include=FALSE}
 inter.small$country <- as.factor(ifelse(inter.small$Q22==44, "China", ifelse(inter.small$Q22==91, "India", "Other")))
 country_order <- c("China", "India", "Other")
 ggplot(inter.small, aes(x=country)) + stat_count(fill="#F0E442") + theme_bw() +
@@ -55,13 +55,92 @@ ggplot(inter.small, aes(x=country)) + stat_count(fill="#F0E442") + theme_bw() +
   scale_x_discrete(limits = country_order)
 ```
 
-```{r}
+```{r, include=FALSE}
 inter.small$likelihood = recode(inter.small$Q28, `1` = 2, `3` = 1, `2` = 0)
 inter.small$likelihood = as.factor(inter.small$likelihood)
 levels(inter.small$likelihood) <- c("Unlikely", "Somewhat likely", "Very likely")
 ```
 
-```{r}
+```{r, include=FALSE}
+ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender, color=degree, fill=degree)) +
+  geom_bar(mapping = aes(x = gender, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~degree) +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  xlab("Gender") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+```
+
+```{r, echo=FALSE}
+gender_order <- c("Male", "Female")
+ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender, color=discipline, fill=discipline)) +
+  geom_bar(mapping = aes(x = gender, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~discipline) +
+  guides(fill = guide_legend(title="Discipline"), color = FALSE) +
+  ggtitle("Gender split by discipline") +
+  xlab("Gender") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  scale_x_discrete(limits = gender_order)
+```
+
+Share of females is much higher in Life sciences as compared to Computer science and Engineering disciplines where males dominate the proportion.
+
+```{r, echo=FALSE}
+gender_order <- c("Male", "Female")
+ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender, color=country, fill=country)) +
+  geom_bar(mapping = aes(x = gender, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~country) +
+  guides(fill = guide_legend(title="Country"), color = FALSE) +
+  ggtitle("Gender split by home country") +
+  xlab("Response") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  scale_x_discrete(limits = gender_order)
+```
+
+India has much higher share of male students than female students as compared to any other country.
+
+```{r, echo=FALSE}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=degree, color=discipline, fill=discipline)) +
+  geom_bar(mapping = aes(x = degree, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~discipline) +
+  guides(fill = guide_legend(title="Discipline"), color = FALSE) +
+  ggtitle("Degree split by discipline") +
+  xlab("Degree") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+```
+
+There are much more PhD students than Master's students in Physical sciences, Life sciences and Mathematics disciplines as compared to Computer science and Engineering disciplines.
+
+```{r, echo=FALSE}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=degree, color=country, fill=country)) +
+  geom_bar(mapping = aes(x = degree, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~country) +
+  guides(fill = guide_legend(title="Country"), color = FALSE) +
+  ggtitle("Degree split by home country") +
+  xlab("Degree") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+```
+
+With the exception of India, the share of PhD students dominate over that of Master's students across all countries.
+
+```{r, echo=FALSE}
+ggplot(inter.small[!is.na(inter.small$country),], aes(x=country, color=discipline, fill=discipline)) +
+  geom_bar(mapping = aes(x = country, y = ..prop.., group = 1), stat = "count") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  facet_wrap(~discipline) +
+  guides(fill = guide_legend(title="Discipline"), color = FALSE) +
+  ggtitle("Home country split by discipline") +
+  xlab("Degree") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+```
+
+Indian students have the highest share among all countries in the Computer Science and Engineering disciplines.
+
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q40, color=gender, fill=gender)) +
   geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -73,7 +152,7 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q40, color=gender, fill=g
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q40, color=degree, fill=degree)) +
   geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -85,7 +164,7 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q40, color=degree, fill=d
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q40, color=discipline, fill=discipline)) +
   geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -97,7 +176,7 @@ ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q40, color=discipline
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q40, color=country, fill=country)) +
   geom_bar(mapping = aes(x = Q40, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -109,7 +188,7 @@ ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q40, color=country, fill
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q41, color=gender, fill=gender)) +
   geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -121,13 +200,13 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q41, color=gender, fill=g
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, echo=FALSE}
 ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q41, color=degree, fill=degree)) +
   geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   facet_wrap(~degree) +
   guides(fill = guide_legend(title="Degree"), color = FALSE) +
-  ggtitle("Expected treatment by colleagues and professors in home country on return") +
+  ggtitle("Expected treatment in home country on return, split by degree") +
   labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
   xlab("Response") + ylab("Proportion of students (%)") +
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
@@ -135,7 +214,7 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q41, color=degree, fill=d
 
 As compared to PhD students, Master's students feel that they will be treated better by their colleagues and professors in their home country if they were to return after their graduation.
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q41, color=discipline, fill=discipline)) +
   geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -147,7 +226,7 @@ ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q41, color=discipline
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q41, color=country, fill=country)) +
   geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -159,7 +238,7 @@ ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q41, color=country, fill
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q42, color=gender, fill=gender)) +
   geom_bar(mapping = aes(x = Q42, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -171,7 +250,7 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q42, color=gender, fill=g
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q42, color=degree, fill=degree)) +
   geom_bar(mapping = aes(x = Q42, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -184,7 +263,7 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q42, color=degree, fill=d
 ```
 
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q42, color=discipline, fill=discipline)) +
   geom_bar(mapping = aes(x = Q42, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -196,7 +275,7 @@ ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q42, color=discipline
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q42, color=country, fill=country)) +
   geom_bar(mapping = aes(x = Q42, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -208,13 +287,13 @@ ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q42, color=country, fill
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-```{r}
+```{r, echo=FALSE}
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q43, color=gender, fill=gender)) +
   geom_bar(mapping = aes(x = Q43, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   facet_wrap(~gender) +
   guides(fill = guide_legend(title="Sex"), color = FALSE) +
-  ggtitle("Challenges encountered in the US") +
+  ggtitle("Challenges encountered in the US, by gender") +
   labs(caption="Response values: 0: Did not face any challenges 1: Faced some challenges \n2: Faced a lot of challenges") +
   xlab("Response") + ylab("Proportion of students (%)") +
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
@@ -222,7 +301,7 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q43, color=gender, fill=g
 
 A higher percentage of female students faced a lot of challenges while adjusting to American culture as compared to their male counterparts.
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q43, color=degree, fill=degree)) +
   geom_bar(mapping = aes(x = Q43, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -235,21 +314,21 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q43, color=degree, fill=d
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q43, color=discipline, fill=discipline)) +
   geom_bar(mapping = aes(x = Q43, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   facet_wrap(~discipline) +
   guides(fill = guide_legend(title="Discipline"), color = FALSE) +
-  ggtitle("Challenges encountered in the US") +
+  ggtitle("Challenges encountered in the US, by discipline") +
   labs(caption="Response values: 0: Did not face any challenges 1: Faced some challenges \n2: Faced a lot of challenges") +
   xlab("Response") + ylab("Proportion of students (%)") +
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
-Students in other disciplines face a lot of challenges as compared to their counterparts in computer science, engineering, life sciences, physical sciences, and mathematics disciplines.
+Students in other disciplines faced a lot of challenges as compared to their counterparts in computer science, engineering, life sciences, physical sciences, and mathematics disciplines.
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q43, color=country, fill=country)) +
   geom_bar(mapping = aes(x = Q43, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -262,12 +341,12 @@ ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q43, color=country, fill
 ```
 
 
-```{r}
-aggregate(Q40 ~ Q43, data=inter.small, length)
+```{r, include=FALSE}
+aggregate(Q40 ~ discipline, data=inter.small, length)
 ```
 
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x = Q39, ..count.., fill = likelihood)) + 
   geom_density(position = "fill") + 
   ggtitle("Likelihood of staying in the US after graduation") + 
@@ -275,27 +354,23 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x = Q39, ..count.., fill = 
   facet_wrap(~gender)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small, aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small, aes(x = Q41, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small, aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
-```{r}
+```{r, include=FALSE}
 ggplot(inter.small, aes(x = Q43, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
-```{r}
-ggplot(inter.small, aes(x = Q36, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
-```
 
-
-```{r}
+```{r, include=FALSE}
 summary(factor(inter.data$Q22))
 ```
