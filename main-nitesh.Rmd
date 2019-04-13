@@ -62,7 +62,7 @@ Since Q39 has been converted to a numeric variable, should we apply some transfo
 ggplot(inter.small, aes(x = (Q39), ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q5)
 
 # Stay in US by Degree
-ggplot(inter.small, aes(x = (Q39), ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q4)
+ggplot(inter.small, aes(x = (Q39), fill = likelihood)) + geom_histogram(binwidth=1) + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q4)
 # DIZZ IZZ GOOD
 
 # Stay in US by country
@@ -143,6 +143,21 @@ gg = ggplot(inter.polr.df, aes(x = Q43, y = .resid)) + geom_point()
 gg + geom_smooth(method.args = list(degree = 1))
 ```
 
+```{r}
+ggplot(inter.small, aes(x = Q40)) + stat_count(color = "#E69F00", fill = "#E69F00") + labs(x="Response", y="Number of Students", title="Treatment by colleagues and professors in the US in comparison with those \n in your home country", caption="<1> = Treated much worse ... <5> = Treated much better") + theme_bw()
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q41)) + stat_count(color = "#E69F00", fill = "#E69F00") + labs(x="Response", y="Number of Students", title="Treatment by colleagues and professors in your home country if you returned", caption="<1> = Treated much worse ... <5> = Treated much better") + theme_bw()
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q42)) + stat_count(color = "#E69F00", fill = "#E69F00") + labs(x="Response", y="Number of Students", title=" How well have you adjusted to American educational culture", caption="<1> = Did not adjusted well ... <5> = Adjusted well") + theme_bw()
+```
+
+```{r}
+ggplot(inter.small, aes(x = factor(Q43, labels = c( "No challenges", "Some challenges", "Many challenges")))) + stat_count(color = "#E69F00", fill = "#E69F00") + labs(x="", y="Number of Students", title="Challenges encountered while adjusting to America") + theme_bw()
+```
 
 
 Questions to ask professor Luen:
