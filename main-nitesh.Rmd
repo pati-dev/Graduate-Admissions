@@ -11,11 +11,11 @@ library(tidyverse)
 library(MASS)
 library(arm)
 library(broom)
+cb_palette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
 ```{r}
 inter.data = read.csv("International-graduate-student-survey-results.csv")
-contcode = read.csv("Country-List-Metadata.csv")
 # summary(inter.data)
 # Q39
 acad.experience = rowSums(dplyr::select(inter.data, Q39_1 , Q39_2 , Q39_3 , Q39_4 , Q39_5 , Q39_6 , Q39_7), na.rm = FALSE, dims = 1)/7
@@ -33,8 +33,8 @@ inter.small$Q3 = factor(inter.small$Q3, labels = c("Male", "Female", "Not Specif
 inter.small$Q5 = factor(inter.small$Q5)
 levels(inter.small$Q5) <- c("Life sciences", "Physical sciences", "Engineering", "Mathematics", "Computer science", "Other")
 # Factoring countries
-inter.small$Q22 = factor(inter.small$Q22)
-levels(inter.small$Q5) <- as.vector(contcode)
+inter.small$country <- as.factor(ifelse(inter.small$Q22==44, "China", ifelse(inter.small$Q22==91, "India", "Other")))
+levels(inter.small$country) <- c("China", "India", "Other")
 
 # Recoding and Factoring the response in order
 inter.small$likelihood = recode(inter.small$Q28, `1` = 2, `3` = 1, `2` = 0)
@@ -46,7 +46,69 @@ EDA
 ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q3)) + stat_count() + facet_wrap(~as.factor(Q5))
 ```
 ```{r}
-ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q3)) + stat_count() + facet_wrap(~as.factor(Q5))
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q3)) + stat_count() + facet_wrap(~as.factor(country))
+```
+
+```{r}
+# Stay in US by Gender
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = (Q39), ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q3)
+
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = (Q39)^3, ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q3)
+
+```
+Since Q39 has been converted to a numeric variable, should we apply some transformation over this to smooth out the distribution? We noticed that by cubing the data we were able to obtain some pattern in our data as opposed to not applying any transformation whatsoever.
+```{r}
+# Stay in US by Discipline
+ggplot(inter.small, aes(x = (Q39), ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q5)
+
+# Stay in US by Degree
+ggplot(inter.small, aes(x = (Q39), ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q4)
+# DIZZ IZZ GOOD
+
+# Stay in US by country
+ggplot(inter.small, aes(x = (Q39), ..count.., fill = likelihood)) + geom_density(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette) + facet_wrap(~country)
+```
+
+```{r}
+# Treatment by colleagues and professors by Gender
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors by Gender") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q3)
+
+# Treatment by colleagues and professors by Degree
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors by Degree") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q4)
+
+# Treatment by colleagues and professors by Discipline
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors by Discipline") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q5)
+
+# Treatment by colleagues and professors by country
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors by country") + scale_fill_manual(values = cb_palette) + facet_wrap(~country)
+```
+
+```{r}
+# Treatment by colleagues and professors in home country by Gender
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q41, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors in home country by Gender") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q3)
+
+# Treatment by colleagues and professors by Degree
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q41, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors in home country by Degree") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q4)
+
+# Treatment by colleagues and professors by Discipline
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q41, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors in home country by Discipline") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q5)
+
+# Treatment by colleagues and professors by country
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q41, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Treatment by colleagues and professors in home country by Country") + scale_fill_manual(values = cb_palette) + facet_wrap(~country)
+```
+
+```{r}
+# Adjustment to american culture by Gender
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Adjustment to american culture by Gender by Gender") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q3)
+
+# Treatment by colleagues and professors by Degree
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Adjustment to american culture by Gender by Degree") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q4)
+
+# Treatment by colleagues and professors by Discipline
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Adjustment to american culture by Gender by Discipline") + scale_fill_manual(values = cb_palette) + facet_wrap(~Q5)
+
+# Treatment by colleagues and professors by country
+ggplot(inter.small[inter.small$Q3 %in% c("Male", "Female"),], aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Adjustment to american culture by Gender by Country") + scale_fill_manual(values = cb_palette) + facet_wrap(~country)
 ```
 
 
@@ -67,6 +129,7 @@ ggplot(inter.small, aes(x = Q39, fill = likelihood)) + stat_count()
 ggplot(inter.small, aes(x = Q43, fill = Q28)) + stat_count()
 # summary(inter.small$Q42)
 ```
+
 ```{r}
 # Preliminary model
 inter.polr = polr(likelihood~Q39*Q40*Q41*Q43, data = inter.small)
