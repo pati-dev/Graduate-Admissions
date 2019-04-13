@@ -25,34 +25,42 @@ inter.small$Q39 = acad.experience
 inter.small$Q43 = ifelse(inter.data$Q43_6, 0, ifelse(acad.challenges<3, 1, 2))
 ```
 
-```{r, include=FALSE}
+```{r}
 inter.small$gender <- as.factor(ifelse(inter.small$Q3==1, "Male", ifelse(inter.small$Q3==2, "Female", NA)))
 gender_order <- c("Male", "Female")
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender)) + stat_count(fill="#E69F00") + theme_bw() +
   ggtitle("Distribution of respondents by gender") +
-  scale_x_discrete(limits = gender_order)
+  scale_x_discrete(limits = gender_order) +
+  ylab("Number of students") + xlab("") +
+  theme(text = element_text(size=20), axis.title = element_text(size=15))
 ```
 
-```{r, include=FALSE}
+```{r}
 inter.small$degree <- as.factor(ifelse(inter.small$Q4==1, "Master's", "PhD"))
 ggplot(inter.small, aes(x=degree)) + stat_count(fill="#56B4E9") + theme_bw() +
-  ggtitle("Distribution of respondents by degree")
+  ggtitle("Distribution of respondents by degree") +
+  ylab("Number of students") + xlab("") +
+  theme(text = element_text(size=20), axis.title = element_text(size=15))
 ```
 
-```{r, include=FALSE}
+```{r}
 inter.small$discipline <- as.factor(ifelse(inter.small$Q5==1, "Life sciences", ifelse(inter.small$Q5==2, "Physical sciences", ifelse(inter.small$Q5==3, "Engineering", ifelse(inter.small$Q5==4, "Mathematics", ifelse(inter.small$Q5==5, "Computer science", "Other"))))))
 disc_order <- c("Engineering", "Life sciences", "Computer science", "Physical sciences", "Mathematics", "Other")
 ggplot(inter.small, aes(x=discipline)) + stat_count(fill="#009E73") + theme_bw() +
   ggtitle("Distribution of respondents by discipline") +
-  scale_x_discrete(limits = disc_order)
+  scale_x_discrete(limits = disc_order) +
+  ylab("Number of students") + xlab("") +
+  theme(text = element_text(size=20), axis.title = element_text(size=15), axis.text = element_text(size=15), axis.text.x = element_text(angle =25, hjust = 1))
 ```
 
-```{r, include=FALSE}
+```{r}
 inter.small$country <- as.factor(ifelse(inter.small$Q22==44, "China", ifelse(inter.small$Q22==91, "India", "Other")))
 country_order <- c("China", "India", "Other")
 ggplot(inter.small, aes(x=country)) + stat_count(fill="#F0E442") + theme_bw() +
   ggtitle("Distribution of respondents by country") +
-  scale_x_discrete(limits = country_order)
+  scale_x_discrete(limits = country_order) +
+  ylab("Number of students") + xlab("") +
+  theme(text = element_text(size=20), axis.title = element_text(size=15), axis.text = element_text(size=15))
 ```
 
 ```{r, include=FALSE}
@@ -81,7 +89,8 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender, color=discipline,
   ggtitle("Gender split by discipline") +
   xlab("Gender") + ylab("Proportion of students (%)") +
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
-  scale_x_discrete(limits = gender_order)
+  scale_x_discrete(limits = gender_order) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
 ```
 
 Share of females is much higher in Life sciences as compared to Computer science and Engineering disciplines where males dominate the proportion.
@@ -94,9 +103,10 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=gender, color=country, fi
   facet_wrap(~country) +
   guides(fill = guide_legend(title="Country"), color = FALSE) +
   ggtitle("Gender split by home country") +
-  xlab("Response") + ylab("Proportion of students (%)") +
+  xlab("Gender") + ylab("Proportion of students (%)") +
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
-  scale_x_discrete(limits = gender_order)
+  scale_x_discrete(limits = gender_order) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
 ```
 
 India has much higher share of male students than female students as compared to any other country.
@@ -109,7 +119,8 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=degree, color=discipline,
   guides(fill = guide_legend(title="Discipline"), color = FALSE) +
   ggtitle("Degree split by discipline") +
   xlab("Degree") + ylab("Proportion of students (%)") +
-  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
 ```
 
 There are much more PhD students than Master's students in Physical sciences, Life sciences and Mathematics disciplines as compared to Computer science and Engineering disciplines.
@@ -122,7 +133,8 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=degree, color=country, fi
   guides(fill = guide_legend(title="Country"), color = FALSE) +
   ggtitle("Degree split by home country") +
   xlab("Degree") + ylab("Proportion of students (%)") +
-  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
 ```
 
 With the exception of India, the share of PhD students dominate over that of Master's students across all countries.
