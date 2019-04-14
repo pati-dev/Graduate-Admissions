@@ -22,7 +22,7 @@ acad.experience <- rowSums(select(inter.data, Q39_1 , Q39_2 , Q39_3 , Q39_4 , Q3
 acad.challenges =  as.numeric(inter.data$Q43_1 + inter.data$Q43_2 + inter.data$Q43_3 + inter.data$Q43_4 + inter.data$Q43_5 + inter.data$Q43_7)
 inter.small = select(inter.data, Q2, Q3, Q4, Q5, Q22, Q36, Q40, Q41, Q42, Q28)
 inter.small$Q39 = acad.experience
-inter.small$Q43 = ifelse(inter.data$Q43_6, 0, ifelse(acad.challenges<3, 1, 2))
+inter.small$Q43 = as.factor(ifelse(inter.data$Q43_6, 0, ifelse(acad.challenges<3, 1, 2)))
 ```
 
 ```{r}
@@ -147,7 +147,8 @@ ggplot(inter.small[!is.na(inter.small$country),], aes(x=country, color=disciplin
   guides(fill = guide_legend(title="Discipline"), color = FALSE) +
   ggtitle("Home country split by discipline") +
   xlab("Degree") + ylab("Proportion of students (%)") +
-  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
 ```
 
 Indian students have the highest share among all countries in the Computer Science and Engineering disciplines.
@@ -212,6 +213,50 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q41, color=gender, fill=g
   theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
 ```
 
+```{r}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q40)) +
+  geom_bar(mapping = aes(x = Q40, y = ..count..), stat = "count", fill="#E69F00") +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Treatment by professors and colleagues in the US as compared \nto home country") +
+  labs(caption="Response values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse 4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Number of students") +
+  theme_bw() +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q41)) +
+  geom_bar(mapping = aes(x = Q41, y = ..count..), stat = "count", fill="#56B4E9") +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Expected treatment in home country on return") +
+  labs(caption="Response values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse 4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Number of students") +
+  theme_bw() +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q42)) +
+  geom_bar(mapping = aes(x = Q42, y = ..count..), stat = "count", fill="#009E73") +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Adjustment to American culture") +
+  labs(caption="Response values scaled from 1 meaning Did not adjust well to 5 meaning Adjusted well") +
+  xlab("Response") + ylab("Number of students") +
+  theme_bw() +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q43)) +
+  geom_bar(mapping = aes(x = Q43, y = ..count..), stat = "count", fill="#F0E442") +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Challenges encountered in the US") +
+  labs(caption="Some: Less than 3 challenges   Lots: More than or equal to 3 challenges") +
+  xlab("") + ylab("Number of students") +
+  theme_bw() +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
+```
+
 ```{r, echo=FALSE}
 ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q41, color=degree, fill=degree)) +
   geom_bar(mapping = aes(x = Q41, y = ..prop.., group = 1), stat = "count") +
@@ -219,9 +264,10 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q41, color=degree, fill=d
   facet_wrap(~degree) +
   guides(fill = guide_legend(title="Degree"), color = FALSE) +
   ggtitle("Expected treatment in home country on return, split by degree") +
-  labs(caption="Values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n  4. Somewhat better  5. Much better") +
+  labs(caption="Response values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n4. Somewhat better  5. Much better") +
   xlab("Response") + ylab("Proportion of students (%)") +
-  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
 ```
 
 As compared to PhD students, Master's students feel that they will be treated better by their colleagues and professors in their home country if they were to return after their graduation.
@@ -300,15 +346,17 @@ ggplot(inter.small[!is.na(inter.small$country),], aes(x=Q42, color=country, fill
 ```
 
 ```{r, echo=FALSE}
+levels(inter.small$Q43) <- c("None", "Some", "Lots")
 ggplot(inter.small[!is.na(inter.small$gender),], aes(x=Q43, color=gender, fill=gender)) +
   geom_bar(mapping = aes(x = Q43, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   facet_wrap(~gender) +
   guides(fill = guide_legend(title="Sex"), color = FALSE) +
   ggtitle("Challenges encountered in the US, by gender") +
-  labs(caption="Response values: 0: Did not face any challenges 1: Faced some challenges \n2: Faced a lot of challenges") +
-  xlab("Response") + ylab("Proportion of students (%)") +
-  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+  labs(caption="Some: Less than 3 challenges   Lots: More than or equal to 3 challenges") +
+  xlab("") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=11))
 ```
 
 A higher percentage of female students faced a lot of challenges while adjusting to American culture as compared to their male counterparts.
@@ -327,15 +375,17 @@ ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q43, color=degree, fill=d
 
 
 ```{r, echo=FALSE}
+levels(inter.small$Q43) <- c("None", "Some", "Lots")
 ggplot(inter.small[!is.na(inter.small$discipline),], aes(x=Q43, color=discipline, fill=discipline)) +
   geom_bar(mapping = aes(x = Q43, y = ..prop.., group = 1), stat = "count") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   facet_wrap(~discipline) +
   guides(fill = guide_legend(title="Discipline"), color = FALSE) +
   ggtitle("Challenges encountered in the US, by discipline") +
-  labs(caption="Response values: 0: Did not face any challenges 1: Faced some challenges \n2: Faced a lot of challenges") +
-  xlab("Response") + ylab("Proportion of students (%)") +
-  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette)
+  labs(caption="Some: Less than 3 challenges   Lots: More than or equal to 3 challenges") +
+  xlab("") + ylab("Proportion of students (%)") +
+  theme_bw() + scale_fill_manual(values=cb_palette) + scale_color_manual(values=cb_palette) +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10))
 ```
 
 Students in other disciplines faced a lot of challenges as compared to their counterparts in computer science, engineering, life sciences, physical sciences, and mathematics disciplines.
@@ -366,19 +416,72 @@ ggplot(inter.small[!is.na(inter.small$gender),], aes(x = Q39, ..count.., fill = 
   facet_wrap(~gender)
 ```
 
-```{r, include=FALSE}
-ggplot(inter.small, aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+```{r}
+ggplot(inter.small, aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation \nbased upon treatment by US professors and colleagues") + scale_fill_manual(values = cb_palette) +
+  ylab("Likelihood") + xlab("Response") +
+  guides(fill = guide_legend(title="Likelihood"), color = FALSE) +
+  labs(caption="Response values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n4. Somewhat better  5. Much better") +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10))
 ```
 
-```{r, include=FALSE}
-ggplot(inter.small, aes(x = Q41, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
+```{r}
+ggplot(inter.small, aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation \nbased upon treatment by US professors and colleagues, by degree") + scale_fill_manual(values = cb_palette) +
+  ylab("Likelihood") + xlab("Response") +
+  guides(fill = guide_legend(title="Likelihood"), color = FALSE) +
+  labs(caption="Response values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n4. Somewhat better  5. Much better") +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  facet_wrap(~degree)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q40, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation \nbased upon treatment by US professors and colleagues, by country") + scale_fill_manual(values = cb_palette) +
+  ylab("Likelihood") + xlab("Response") +
+  guides(fill = guide_legend(title="Likelihood"), color = FALSE) +
+  labs(caption="Response values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse \n4. Somewhat better  5. Much better") +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  facet_wrap(~country)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation \nbased upon adjustment to American culture") + scale_fill_manual(values = cb_palette) +
+  ylab("Likelihood") + xlab("Response") +
+  guides(fill = guide_legend(title="Likelihood"), color = FALSE) +
+  labs(caption="Response values scaled from 1 meaning Did not adjust well to 5 meaning Adjusted well") +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10))
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation \nbased upon adjustment to American culture, by degree") + scale_fill_manual(values = cb_palette) +
+  ylab("Likelihood") + xlab("Response") +
+  guides(fill = guide_legend(title="Likelihood"), color = FALSE) +
+  labs(caption="Response values scaled from 1 meaning Did not adjust well to 5 meaning Adjusted well") +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  facet_wrap(~degree)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation \nbased upon adjustment to American culture, by country") + scale_fill_manual(values = cb_palette) +
+  ylab("Likelihood") + xlab("Response") +
+  guides(fill = guide_legend(title="Likelihood"), color = FALSE) +
+  labs(caption="Response values scaled from 1 meaning Did not adjust well to 5 meaning Adjusted well") +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  facet_wrap(~country)
+```
+
+```{r}
+ggplot(inter.small, aes(x = Q43, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation \nbased upon adjustment to American culture, by country") + scale_fill_manual(values = cb_palette) +
+  ylab("Likelihood") + xlab("Response") +
+  guides(fill = guide_legend(title="Likelihood"), color = FALSE) +
+  labs(caption="Response values scaled from 1 meaning Did not adjust well to 5 meaning Adjusted well") +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  facet_wrap(~gender)
 ```
 
 ```{r, include=FALSE}
 ggplot(inter.small, aes(x = Q42, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
-```{r, include=FALSE}
+```{r}
 ggplot(inter.small, aes(x = Q43, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
