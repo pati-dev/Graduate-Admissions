@@ -485,6 +485,26 @@ ggplot(inter.small, aes(x = Q42, ..count.., fill = likelihood)) + stat_count(pos
 ggplot(inter.small, aes(x = Q43, ..count.., fill = likelihood)) + stat_count(position = "fill") + ggtitle("Likelihood of staying in the US after graduation") + scale_fill_manual(values = cb_palette)
 ```
 
+```{r}
+ggplot(inter.small[!is.na(inter.small$degree),], aes(x=Q41)) +
+  geom_bar(mapping = aes(x = Q41, y = ..count..), stat = "count", fill="#56B4E9") +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Expected treatment in home country on return") +
+  labs(caption="Response values: 1. Much worse  2. Somewhat worse  3. Neither better nor worse 4. Somewhat better  5. Much better") +
+  xlab("Response") + ylab("Number of students") +
+  theme_bw() +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
+```
+
+```{r}
+ggplot(inter.small[!is.na(inter.small$likelihood),], aes(x=likelihood)) +
+  geom_bar(mapping = aes(x = likelihood, y = ..count..), stat = "count", fill="#009E73") +
+  guides(fill = guide_legend(title="Degree"), color = FALSE) +
+  ggtitle("Likelihood of staying in the US after graduation") +
+  xlab("") + ylab("Number of students") +
+  theme_bw() +
+  theme(text = element_text(size=12), axis.title = element_text(size=12), axis.text = element_text(size=12))
+```
 
 ```{r, include=FALSE}
 summary(factor(inter.data$Q22))
