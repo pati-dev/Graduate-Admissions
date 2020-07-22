@@ -4,8 +4,8 @@ subtitle: "STEM Graduate Students"
 author: "Ankit Mathur & Nitesh Jaswal"
 date: "4/28/2019"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
